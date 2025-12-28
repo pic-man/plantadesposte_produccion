@@ -1,0 +1,694 @@
+<?php
+//session_start();
+//ini_set("display_errors", false);
+ini_set('display_errors', '0');
+error_reporting(0);
+
+$idGuia = $_GET["id"]? $_GET["id"]: "1";
+date_default_timezone_set("America/Bogota");
+$fecha_actual = date("Y-m-d");
+include("../config.php");
+
+
+$sql = "SELECT 
+    desprese.id,
+    destino,
+    nro_pollo_desprese,
+    peso_pollo_desprese,
+    nro_pollo_enteros,
+    peso_pollo_enteros,
+    proveedorpollo.sede,
+    lote_pollo,
+    fecha_venci_pollo,
+    proveedor_hielo.sede,
+    lote_hielo,
+    fecha_venci_hielo,
+    proveedor_empaque.sede,
+    lote_empaque,
+    fecha_venci_empaque,
+    fabricante_empaque,
+    proveedor_salmuera.sede,
+    lote_salmuera,
+    fecha_venci_salmuera,
+    responsable,
+    responsables.nombres,
+    fecha_desprese,
+    Temp1,
+    Temp2,
+    Temp3,
+    Hora1,
+    Hora2,
+    Hora3,
+    fecha_beneficio,
+    tipo_pollo
+    FROM desprese 
+    INNER JOIN 
+        proveedorpollo ON desprese.proveedor_pollo = proveedorpollo.id 
+    INNER JOIN
+        proveedor_hielo ON desprese.proveedor_hielo = proveedor_hielo.id
+    INNER JOIN
+        proveedor_empaque ON desprese.proveedor_empaque = proveedor_empaque.id
+    INNER JOIN
+        proveedor_salmuera ON desprese.proveedor_salmuera = proveedor_salmuera.id
+    INNER JOIN
+        responsables ON desprese.responsable = responsables.cedula
+    WHERE desprese.id = '$idGuia'";
+$operation = mysqli_query($link, $sql);
+$row = mysqli_fetch_row($operation);
+
+$sql2 = "SELECT empresa,sede FROM destinos WHERE id = " . $row[1];
+$operation2 = mysqli_query($link, $sql2);
+$empresa = mysqli_fetch_row($operation2);
+
+$sql3 = "SELECT item,kilos,cajas, canastilla_base FROM desprese_items WHERE guia = '$idGuia'";
+$operation3 = mysqli_query($link, $sql3);
+
+$canastillasBase = 0;
+
+$items = array(
+    "059758" => [
+        "cajas" => 0,
+        "kg" => 0
+    ],
+    "045401" => [
+        "cajas" => 0,
+        "kg" => 0
+    ],
+    "042788" => [
+        "cajas" => 0,
+        "kg" => 0
+    ],
+    "042789" => [
+        "cajas" => 0,
+        "kg" => 0
+    ],
+    "059756" => [
+        "cajas" => 0,
+        "kg" => 0
+    ],
+    "059757" => [
+        "cajas" => 0,
+        "kg" => 0
+    ],
+    "059755" => [
+        "cajas" => 0,
+        "kg" => 0
+    ],
+    "059762" =>[
+        "cajas" => 0,
+        "kg" => 0
+    ],
+    "059760" =>[
+        "cajas" => 0,
+        "kg" => 0
+    ],
+    "059761" =>[
+        "cajas" => 0,
+        "kg" => 0
+    ],
+    "059759" =>[
+        "cajas" => 0,
+        "kg" => 0
+    ]
+);
+
+while($row3 = mysqli_fetch_row($operation3)){
+    if ($row3[0] == "059758") {
+        $items["059758"]["cajas"] += $row3[2];
+        $items["059758"]["kg"] += $row3[1];
+    }elseif ($row3[0] == "045401") {
+        $items["045401"]["cajas"] += $row3[2];
+        $items["045401"]["kg"] += $row3[1];
+    }elseif ($row3[0] == "042788") {
+        $items["042788"]["cajas"] += $row3[2];
+        $items["042788"]["kg"] += $row3[1];
+    }elseif ($row3[0] == "042789") {
+        $items["042789"]["cajas"] += $row3[2];
+        $items["042789"]["kg"] += $row3[1];
+    }elseif ($row3[0] == "059756") {
+        $items["059756"]["cajas"] += $row3[2];
+        $items["059756"]["kg"] += $row3[1];
+    }elseif ($row3[0] == "059757") {
+        $items["059757"]["cajas"] += $row3[2];
+        $items["059757"]["kg"] += $row3[1];
+    }elseif ($row3[0] == "059755") {
+        $items["059755"]["cajas"] += $row3[2];
+        $items["059755"]["kg"] += $row3[1];
+    }elseif ($row3[0] == "059762") {
+        $items["059762"]["cajas"] += $row3[2];
+        $items["059762"]["kg"] += $row3[1];
+    }elseif ($row3[0] == "059760") {
+        $items["059760"]["cajas"] += $row3[2];
+        $items["059760"]["kg"] += $row3[1];
+    }elseif ($row3[0] == "059761") {
+        $items["059761"]["cajas"] += $row3[2];
+        $items["059761"]["kg"] += $row3[1];
+    }elseif ($row3[0] == "059759") {
+        $items["059759"]["cajas"] += $row3[2];
+        $items["059759"]["kg"] += $row3[1];
+    }
+    $canastillasBase += $row3[3];
+}
+
+$sql4 = "SELECT item,kilos_mejora,cajas_mejora FROM mejora_items WHERE id_guia = '$idGuia'";
+$operation4 = mysqli_query($link, $sql4);
+$itemsM = array(
+    "059758" => [
+        "cajas" => 0,
+        "kg" => 0
+    ],
+    "045401" => [
+        "cajas" => 0,
+        "kg" => 0
+    ],
+    "042788" => [
+        "cajas" => 0,
+        "kg" => 0
+    ],
+    "042789" => [
+        "cajas" => 0,
+        "kg" => 0
+    ],
+    "059756" => [
+        "cajas" => 0,
+        "kg" => 0
+    ],
+    "059757" => [
+        "cajas" => 0,
+        "kg" => 0
+    ],
+    "059755" => [
+        "cajas" => 0,
+        "kg" => 0
+    ],
+    "059762" => [
+        "cajas" => 0,
+        "kg" => 0
+    ],
+    "059760" => [
+        "cajas" => 0,
+        "kg" => 0
+    ],
+    "059761" => [
+        "cajas" => 0,
+        "kg" => 0
+    ],
+    "059759" => [
+        "cajas" => 0,
+        "kg" => 0
+    ]
+);
+
+while ($row2 = mysqli_fetch_row($operation4)) {
+    if ($row2[0] == "059758") {
+        $itemsM["059758"]["cajas"] += $row2[2];
+        $itemsM["059758"]["kg"] += $row2[1];
+    }elseif ($row2[0] == "045401") {
+        $itemsM["045401"]["cajas"] += $row2[2];
+        $itemsM["045401"]["kg"] += $row2[1];
+    }elseif ($row2[0] == "042788") {
+        $itemsM["042788"]["cajas"] += $row2[2];
+        $itemsM["042788"]["kg"] += $row2[1];
+    }elseif ($row2[0] == "042789") {
+        $itemsM["042789"]["cajas"] += $row2[2];
+        $itemsM["042789"]["kg"] += $row2[1];
+    }elseif ($row2[0] == "059756") {
+        $itemsM["059756"]["cajas"] += $row2[2];
+        $itemsM["059756"]["kg"] += $row2[1];
+    }elseif ($row2[0] == "059757") {
+        $itemsM["059757"]["cajas"] += $row2[2];
+        $itemsM["059757"]["kg"] += $row2[1];
+    }elseif ($row2[0] == "059755") {
+        $itemsM["059755"]["cajas"] += $row2[2];
+        $itemsM["059755"]["kg"] += $row2[1];
+    }elseif ($row2[0] == "059762") {
+        $itemsM["059762"]["cajas"] += $row2[2];
+        $itemsM["059762"]["kg"] += $row2[1];
+    }elseif ($row2[0] == "059760") {
+        $itemsM["059760"]["cajas"] += $row2[2];
+        $itemsM["059760"]["kg"] += $row2[1];
+    }elseif ($row2[0] == "059761") {
+        $itemsM["059761"]["cajas"] += $row2[2];
+        $itemsM["059761"]["kg"] += $row2[1];
+    }elseif ($row2[0] == "059759") {
+        $itemsM["059759"]["cajas"] += $row2[2];
+        $itemsM["059759"]["kg"] += $row2[1];
+    }
+}
+
+$totalBlanco = $itemsM["059762"]["kg"] + $itemsM["059760"]["kg"] + $itemsM["059761"]["kg"];
+
+$totalCampo = $itemsM["059758"]["kg"] + $itemsM["059756"]["kg"] + $itemsM["059757"]["kg"];
+
+$porcentajeAla = $itemsM["059758"]["kg"] / ($totalCampo > 0 ? $totalCampo : 1) * 100;
+$porcentajeAlaBlanca = $itemsM["059762"]["kg"] / ($totalBlanco > 0 ? $totalBlanco : 1) * 100;
+$porcentajePechugaBlanca = $itemsM["059760"]["kg"] / ($totalBlanco > 0 ? $totalBlanco : 1) * 100;
+$porcentajePernilBlanca = $itemsM["059761"]["kg"] / ($totalBlanco > 0 ? $totalBlanco : 1) * 100;
+$porcentajeAla = $itemsM["059758"]["kg"] / ($totalCampo > 0 ? $totalCampo : 1) * 100;
+$porcentajePechuga = $itemsM["059756"]["kg"] / ($totalCampo > 0 ? $totalCampo : 1) * 100;
+$porcentajePernil = $itemsM["059757"]["kg"] / ($totalCampo > 0 ? $totalCampo : 1) * 100;
+
+$mejoraAlaBlanca = (($itemsM["059762"]["kg"] > $items["059762"]["kg"] ? $itemsM["059762"]["kg"] : $items["059762"]["kg"]) - $items["059762"]["kg"]) / ($items["059762"]["kg"] > 0 ? $items["059762"]["kg"] : 1) * 100;
+
+$mejoraPechugaBlanca = (($itemsM["059760"]["kg"] > $items["059760"]["kg"] ? $itemsM["059760"]["kg"] : $items["059760"]["kg"]) - $items["059760"]["kg"]) / ($items["059760"]["kg"] > 0 ? $items["059760"]["kg"] : 1) * 100;
+$mejoraPernilBlanco = (($itemsM["059761"]["kg"] > $items["059761"]["kg"] ? $itemsM["059761"]["kg"] : $items["059761"]["kg"]) - $items["059761"]["kg"]) / ($items["059761"]["kg"] > 0 ? $items["059761"]["kg"] : 1) * 100;
+$mejoraPolloBlanco = (($itemsM["059759"]["kg"] > $items["059759"]["kg"] ? $itemsM["059759"]["kg"] : $items["059759"]["kg"]) - $items["059759"]["kg"]) / ($items["059759"]["kg"] > 0 ? $items["059759"]["kg"] : 1) * 100;
+$mejoraAlas = (($itemsM["059758"]["kg"] > $items["059758"]["kg"] ? $itemsM["059758"]["kg"] : $items["059758"]["kg"]) - $items["059758"]["kg"]) / ($items["059758"]["kg"] > 0 ? $items["059758"]["kg"] : 1) * 100;
+$mejoraPechuga = (($itemsM["059756"]["kg"] > $items["059756"]["kg"] ? $itemsM["059756"]["kg"] : $items["059756"]["kg"]) - $items["059756"]["kg"]) / ($items["059756"]["kg"] > 0 ? $items["059756"]["kg"] : 1) * 100;
+$mejoraPernil = (($itemsM["059757"]["kg"] > $items["059757"]["kg"] ? $itemsM["059757"]["kg"] : $items["059757"]["kg"]) - $items["059757"]["kg"]) / ($items["059757"]["kg"] > 0 ? $items["059757"]["kg"] : 1) * 100;
+$mejoraPollo = (($itemsM["059755"]["kg"] > $items["059755"]["kg"] ? $itemsM["059755"]["kg"] : $items["059755"]["kg"]) - $items["059755"]["kg"]) / ($items["059755"]["kg"] > 0 ? $items["059755"]["kg"] : 1) * 100;
+
+$sql5 = "SELECT 
+    responsables.nombres,
+    responsable2
+    FROM desprese
+    INNER JOIN
+        responsables ON desprese.responsable2 = responsables.cedula 
+    WHERE desprese.id = '$idGuia'";
+$operation5 = mysqli_query($link, $sql5);
+$responsable = mysqli_fetch_row($operation5);
+
+$sql6 = "SELECT lote, item FROM mejora_items WHERE id_guia = '$idGuia' GROUP BY item";
+$operation6 = mysqli_query($link, $sql6);
+
+$lotes = array();
+
+while ($row6 = mysqli_fetch_row($operation6)) {
+    $lotes[$row6[1]] = $row6[0];
+}
+
+$PesoTotalDes = $items["059762"]["kg"] + $items["059760"]["kg"] + $items["059761"]["kg"] + $items["059758"]["kg"] + $items["059756"]["kg"] + $items["059757"]["kg"];
+
+$PesoTotalDesP = $items["059762"]["kg"] + $items["059760"]["kg"] + $items["059761"]["kg"] + $items["059759"]["kg"] + $items["059758"]["kg"] + $items["059756"]["kg"] + $items["059757"]["kg"] + $items["059755"]["kg"];
+
+$CajaTotalDes = $items["059762"]["cajas"] + $items["059760"]["cajas"] + $items["059761"]["cajas"] + $items["059758"]["cajas"] + $items["059756"]["cajas"] + $items["059757"]["cajas"];
+
+$CajaTotalDesP = $items["059762"]["cajas"] + $items["059760"]["cajas"] + $items["059761"]["cajas"] + $items["059759"]["cajas"] + $items["059758"]["cajas"] + $items["059756"]["cajas"] + $items["059757"]["cajas"] + $items["059755"]["cajas"];
+
+$PesoTotalMej = $itemsM["059762"]["kg"] + $itemsM["059760"]["kg"] + $itemsM["059761"]["kg"] + $itemsM["059758"]["kg"] + $itemsM["059756"]["kg"] + $itemsM["059757"]["kg"];
+
+$PesoTotalMejP = $itemsM["059762"]["kg"] + $itemsM["059760"]["kg"] + $itemsM["059761"]["kg"] + $itemsM["059759"]["kg"] + $itemsM["059758"]["kg"] + $itemsM["059756"]["kg"] + $itemsM["059757"]["kg"] + $itemsM["059755"]["kg"];
+
+$CajaTotalMej = $itemsM["059762"]["cajas"] + $itemsM["059760"]["cajas"] + $itemsM["059761"]["cajas"] + $itemsM["059758"]["cajas"] + $itemsM["059756"]["cajas"] + $itemsM["059757"]["cajas"];
+
+$CajaTotalMejP = $itemsM["059762"]["cajas"] + $itemsM["059760"]["cajas"] + $itemsM["059761"]["cajas"] + $itemsM["059759"]["cajas"] + $itemsM["059758"]["cajas"] + $itemsM["059756"]["cajas"] + $itemsM["059757"]["cajas"] + $itemsM["059755"]["cajas"];
+
+$totalPorcentaje = ($PesoTotalMej - $PesoTotalDes) / ($PesoTotalDes > 0 ? $PesoTotalDes : 1) * 100;
+$totalPorcentajeP = ($PesoTotalMejP - $PesoTotalDesP) / ($PesoTotalDesP > 0 ? $PesoTotalDesP : 1) * 100;
+
+require('pdf/fpdf.php');
+class PDF extends FPDF{}
+
+$pdf = new PDF();
+
+$pdf->AddPage('P', 'Letter');
+$pdf->AliasNbPages();
+$pdf->SetMargins(10, 10, 10);
+$pdf->SetAutoPageBreak(true, 10);
+$pdf->SetTextColor(0, 0, 0);
+$pdf->SetFont('Arial', 'B', 8);
+$pdf->Cell(14, 5, utf8_decode("Empresa: "), 0, 0, '');
+$pdf->Cell(26, 5, utf8_decode(utf8_decode($empresa[0])), "B", 0, 'C');
+$pdf->Cell(2, 5, utf8_decode(""), 0, 0, 'C');
+$pdf->Cell(9, 5, utf8_decode("Sede: "), 0, 0, '');
+$pdf->Cell(26, 5, utf8_decode($empresa[1]), "B", 0, 'C');
+$pdf->Cell(2, 5, utf8_decode(""), 0, 0, 'C');
+/* $pdf->Cell(22, 5, utf8_decode("Lote Planta: "), 0, 0, '');
+$pdf->Cell(30, 5, utf8_decode($lote), "B", 0, 'C'); 
+$pdf->Cell(2, 5, utf8_decode(""), 0, 0, 'C');*/
+$pdf->Cell(22, 5, utf8_decode("No Pollos Des: "), 0, 0, '');
+$pdf->Cell(15, 5, utf8_decode($row[2]), "B", 0, 'C');
+$pdf->Cell(2, 5, utf8_decode(""), 0, 0, 'C');
+$pdf->Cell(22, 5, utf8_decode("No Pollos Ent: "), 0, 0, '');
+$pdf->Cell(15, 5, utf8_decode($row[4]), "B", 0, 'C');
+$pdf->Cell(2, 5, utf8_decode(""), 0, 0, 'C');
+$pdf->Cell(16, 5, utf8_decode("Tipo Pollo: "), 0, 0, '');
+$pdf->Cell(17, 5, utf8_decode($row[29]), "B", 0, 'C');
+$pdf->Ln(10);
+$pdf->Cell(23, 5, utf8_decode("Peso Inicial Des: "), 0, 0, '');
+$pdf->Cell(22, 5, utf8_decode($row[3]), "B", 0, 'C');
+$pdf->Cell(2, 5, utf8_decode(""), 0, 0, 'C');
+$pdf->Cell(23, 5, utf8_decode("Peso Inicial Des: "), 0, 0, '');
+$pdf->Cell(22, 5, utf8_decode($row[5]), "B", 0, 'C');
+$pdf->Cell(2, 5, utf8_decode(""), 0, 0, 'C');
+$pdf->Cell(24, 5, utf8_decode("Fecha Beneficio: "), 0, 0, '');
+$pdf->Cell(23, 5, utf8_decode($row[28]), "B", 0, 'C');
+$pdf->Cell(2, 5, utf8_decode(""), 0, 0, 'C');
+$pdf->Cell(22, 5, utf8_decode("Fecha Proceso: "), 0, 0, '');
+$pdf->Cell(23, 5, utf8_decode($row[21]), "B", 0, 'C');
+$pdf->Ln(10);
+$pdf->SetFont('Arial', 'B', 8);
+$pdf->Cell(49, 8, "", 1, 0, 'C');
+$pdf->Cell(63.5, 4, utf8_decode("Peso por Desprese"), 1, 0, 'C');
+$pdf->Cell(5, 4, "", 0, 0, 'C');
+$pdf->Cell(72.5, 4, utf8_decode("Peso Producto con Proceso"), 1, 1, 'C');
+$pdf->Cell(49, 8, "", 0, 0, 'C');
+$pdf->Cell(63.5, 4, utf8_decode("TOTAL"), 1, 0, 'C');
+$pdf->Cell(5, 4, "", 0, 0, 'C');
+$pdf->Cell(72.5, 4, utf8_decode("TOTAL PROCESADO"), 1, 1, 'C');
+$pdf->Cell(49, 8, utf8_decode("Item       Descripción"), 1, 0, '');
+$pdf->Cell(20, 8, utf8_decode("Lote Planta"), 1, 0, 'C');
+$pdf->Cell(14.5, 8, utf8_decode("Unids"), 1, 0, 'C');
+$pdf->Cell(14.5, 8, utf8_decode("Kilos"), 1, 0, 'C');
+$pdf->Cell(14.5, 8, utf8_decode("Cajas"), 1, 0, 'C');
+$pdf->Cell(5, 4, "", 0, 0, 'C');
+$pdf->Cell(14.5, 8, utf8_decode("Unids"), 1, 0, 'C');
+$pdf->Cell(14.5, 8, utf8_decode("Kilos"), 1, 0, 'C');
+$pdf->Cell(14.5, 8, utf8_decode("Cajas"), 1, 0, 'C');
+$pdf->Cell(14.5, 8, "", 1, 0, 'C'); 
+$pdf->Cell(14.5, 8, "", 1, 0, 'C');
+$pdf->SetXY($pdf->GetX() - 29, $pdf->GetY() + 2.5);
+$pdf->MultiCell(14.5, 3, utf8_decode("Total"), 0, 'C');
+$pdf->SetXY($pdf->GetX() - 35.5, $pdf->GetY() - 4.5);
+$pdf->MultiCell(16.5, 3, utf8_decode("Porcentaje Mejora"), 0, 'C');
+$pdf->Ln(5);
+$pdf->SetXY($pdf->GetX(), $pdf->GetY() - 4);
+$pdf->SetFont('Arial', '', 8);
+if ($items["059762"]["kg"] != 0) {
+    $pdf->Cell(11, 10, "059762", 1, 0, 'C');
+    $pdf->Cell(38, 10, "", 1, 0, 'C');
+    $pdf->SetXY($pdf->GetX() - 38, $pdf->GetY() + 2);
+    $pdf->MultiCell(38, 3, utf8_decode("ALAS BLANCA MERCAMIO MARINADAS"), 0, 'C');
+    $pdf->SetXY($pdf->GetX(), $pdf->GetY() - 8);
+    $pdf->Cell(49, 5, "", 0, 0, 'C');
+    $pdf->Cell(20, 10,empty($lotes["059762"]) ? "" : $lotes["059762"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $row[2], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $items["059762"]["kg"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $items["059762"]["cajas"], 1, 0, 'C');
+    $pdf->Cell(5, 4, "", 0, 0, 'C');
+    $pdf->Cell(14.5, 10, $row[2], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $itemsM["059762"]["kg"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $itemsM["059762"]["cajas"], 1, 0, 'C');
+    if ($porcentajeAlaBlanca > 16) {
+        $pdf->SetTextColor(255, 0, 0);
+        $pdf->Cell(14.5, 10, number_format($porcentajeAlaBlanca, 2) . "%", 1, 0, 'C');
+    } else {
+        $pdf->Cell(14.5, 10, number_format($porcentajeAlaBlanca, 2) . "%", 1, 0, 'C');
+    }
+    $pdf->SetTextColor(0, 0, 0);
+    if ($mejoraAlaBlanca < 17 || $mejoraAlaBlanca > 22) {
+        $pdf->SetTextColor(255, 0, 0);
+        $pdf->Cell(14.5, 10, number_format($mejoraAlaBlanca, 2) . "%", 1, 1, 'C');
+    }else {
+        $pdf->Cell(14.5, 10, number_format($mejoraAlaBlanca, 2) . "%", 1, 1, 'C');
+    }
+    $pdf->SetTextColor(0, 0, 0);
+    
+}
+if ($items["059760"]["kg"] != 0) {
+
+    $pdf->Cell(11, 10, "059760", 1, 0, 'C');
+    $pdf->Cell(38, 10, "", 1, 0, 'C');
+    $pdf->SetXY($pdf->GetX() - 38, $pdf->GetY() + 2);
+    $pdf->MultiCell(38, 3, utf8_decode("PECHUGA BLANCA MERCAMIO MARINADA"), 0, 'C');
+    $pdf->SetXY($pdf->GetX(), $pdf->GetY() - 8);
+    $pdf->Cell(49, 5, "", 0, 0, 'C');
+    $pdf->Cell(20, 10,empty($lotes["059760"]) ? "" : $lotes["059760"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $row[2], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $items["059760"]["kg"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $items["059760"]["cajas"], 1, 0, 'C');
+    $pdf->Cell(5, 4, "", 0, 0, 'C');
+    $pdf->Cell(14.5, 10, $row[2], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $itemsM["059760"]["kg"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $itemsM["059760"]["cajas"], 1, 0, 'C');
+    if ($porcentajePechugaBlanca < 39) {
+        $pdf->SetTextColor(255, 0, 0);
+        $pdf->Cell(14.5, 10,number_format($porcentajePechugaBlanca, 2) . "%", 1, 0, 'C');
+    } else {
+        $pdf->Cell(14.5, 10,number_format($porcentajePechugaBlanca, 2) . "%", 1, 0, 'C');
+    }
+    $pdf->SetTextColor(0, 0, 0);
+    if ($mejoraPechugaBlanca < 20 || $mejoraPechugaBlanca > 30) {
+        $pdf->SetTextColor(255, 0, 0);
+        $pdf->Cell(14.5, 10, number_format($mejoraPechugaBlanca, 2) . "%", 1, 1, 'C');
+    }else {
+        $pdf->Cell(14.5, 10, number_format($mejoraPechugaBlanca, 2) . "%", 1, 1, 'C');
+    }
+    $pdf->SetTextColor(0, 0, 0);
+}
+if ($items["059761"]["kg"] != 0) {
+
+    $pdf->Cell(11, 10, "059761", 1, 0, 'C');
+    $pdf->Cell(38, 10, "", 1, 0, 'C');
+    $pdf->SetXY($pdf->GetX() - 38, $pdf->GetY() + 2);
+    $pdf->MultiCell(38, 3, utf8_decode("PERNIL BLANCO MERCAMIO MARINADO"), 0, 'C');
+    $pdf->SetXY($pdf->GetX(), $pdf->GetY() - 8);
+    $pdf->Cell(49, 5, "", 0, 0, 'C');
+    $pdf->Cell(20, 10,empty($lotes["059761"]) ? "" : $lotes["059761"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $row[2] * 2, 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $items["059761"]["kg"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $items["059761"]["cajas"], 1, 0, 'C');
+    $pdf->Cell(5, 4, "", 0, 0, 'C');
+    $pdf->Cell(14.5, 10, $row[2] * 2, 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $itemsM["059761"]["kg"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $itemsM["059761"]["cajas"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, number_format($porcentajePernilBlanca,2) . "%", 1, 0, 'C');
+    if ($mejoraPernilBlanco < 20 || $mejoraPernilBlanco > 30) {
+        $pdf->SetTextColor(255, 0, 0);
+        $pdf->Cell(14.5, 10, number_format($mejoraPernilBlanco, 2) . "%", 1, 1, 'C');
+    }else {
+        $pdf->Cell(14.5, 10, number_format($mejoraPernilBlanco, 2) . "%", 1, 1, 'C');
+    }
+    $pdf->SetTextColor(0, 0, 0);
+}
+if ($items["059759"]["kg"] != 0) {
+
+    $pdf->Cell(11, 10, "059759", 1, 0, 'C');
+    $pdf->Cell(38, 10, "", 1, 0, 'C');
+    $pdf->SetXY($pdf->GetX() - 38, $pdf->GetY() + 2);
+    $pdf->MultiCell(38, 3, utf8_decode("POLLO BLANCO MERCAMIO MARINADO"), 0, 'C');
+    $pdf->SetXY($pdf->GetX(), $pdf->GetY() - 8);
+    $pdf->Cell(49, 5, "", 0, 0, 'C');
+    $pdf->Cell(20, 10,empty($lotes["059759"]) ? "" : $lotes["059759"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $row[2], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $items["059759"]["kg"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $items["059759"]["cajas"], 1, 0, 'C');
+    $pdf->Cell(5, 4, "", 0, 0, 'C');
+    $pdf->Cell(14.5, 10, $row[2], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $itemsM["059759"]["kg"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $itemsM["059759"]["cajas"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, "", 1, 0, 'C');
+    if ($mejoraPolloBlanco < 17 || $mejoraPolloBlanco > 22) {
+        $pdf->SetTextColor(255, 0, 0);
+        $pdf->Cell(14.5, 10, number_format($mejoraPolloBlanco, 2) . "%", 1, 1, 'C');
+    }else {
+        $pdf->Cell(14.5, 10, number_format($mejoraPolloBlanco, 2) . "%", 1, 1, 'C');
+    }
+    $pdf->SetTextColor(0, 0, 0);
+}
+if ($items["059758"]["kg"] != 0) {
+    $pdf->Cell(11, 10, "059758", 1, 0, 'C');
+    $pdf->Cell(38, 10, "", 1, 0, 'C');
+    $pdf->SetXY($pdf->GetX() - 38, $pdf->GetY() + 2);
+    $pdf->MultiCell(38, 3, utf8_decode("ALAS POLLO CAMPO MP MARINADAS"), 0, 'C');
+    $pdf->SetXY($pdf->GetX(), $pdf->GetY() - 8);
+    $pdf->Cell(49, 5, "", 0, 0, 'C');
+    $pdf->Cell(20, 10,empty($lotes["059758"]) ? "" : $lotes["059758"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $row[2], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $items["059758"]["kg"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $items["059758"]["cajas"], 1, 0, 'C');
+    $pdf->Cell(5, 4, "", 0, 0, 'C');
+    $pdf->Cell(14.5, 10, $row[2], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $itemsM["059758"]["kg"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $itemsM["059758"]["cajas"], 1, 0, 'C');
+    if ($porcentajeAla > 16) {
+        $pdf->SetTextColor(255, 0, 0);
+        $pdf->Cell(14.5, 10,number_format($porcentajeAla, 2) . "%" , 1, 0, 'C');
+    } else {
+        $pdf->Cell(14.5, 10,number_format($porcentajeAla, 2) . "%" , 1, 0, 'C');
+    }
+    $pdf->SetTextColor(0, 0, 0);
+    if ($mejoraAlas < 15 || $mejoraAlas > 22) {
+        $pdf->SetTextColor(255, 0, 0);
+        $pdf->Cell(14.5, 10, number_format($mejoraAlas, 2) . "%", 1, 1, 'C');
+    }else {
+        $pdf->Cell(14.5, 10, number_format($mejoraAlas, 2) . "%", 1, 1, 'C');
+    }
+    $pdf->SetTextColor(0, 0, 0);
+}
+if ($items["059756"]["kg"] != 0) {
+    $pdf->Cell(11, 10, "059756", 1, 0, 'C');
+    $pdf->Cell(38, 10, "", 1, 0, 'C');
+    $pdf->SetXY($pdf->GetX() - 38, $pdf->GetY() + 2);
+    $pdf->MultiCell(38, 3, utf8_decode("PECHUGA CAMPO MERCAMIO MARINADA"), 0, 'C');
+    $pdf->SetXY($pdf->GetX(), $pdf->GetY() - 8);
+    $pdf->Cell(49, 5, "", 0, 0, 'C');
+    $pdf->Cell(20, 10,empty($lotes["059756"]) ? "" : $lotes["059756"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $row[2], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $items["059756"]["kg"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $items["059756"]["cajas"], 1, 0, 'C');
+    $pdf->Cell(5, 4, "", 0, 0, 'C');
+    $pdf->Cell(14.5, 10, $row[2], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $itemsM["059756"]["kg"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $itemsM["059756"]["cajas"], 1, 0, 'C');
+    if ($porcentajePechuga < 39) {
+        $pdf->SetTextColor(255, 0, 0);
+        $pdf->Cell(14.5, 10, number_format($porcentajePechuga, 2) . "%", 1, 0, 'C');
+    } else {
+        $pdf->Cell(14.5, 10, number_format($porcentajePechuga, 2) . "%", 1, 0, 'C');
+    }
+    $pdf->SetTextColor(0, 0, 0);
+    if ($mejoraPechuga < 20 || $mejoraPechuga > 30) {
+        $pdf->SetTextColor(255, 0, 0);
+        $pdf->Cell(14.5, 10, number_format($mejoraPechuga, 2) . "%", 1, 1, 'C');
+    }else {
+        $pdf->Cell(14.5, 10, number_format($mejoraPechuga, 2) . "%", 1, 1, 'C');
+    }
+    $pdf->SetTextColor(0, 0, 0);
+}
+if ($items["059757"]["kg"] != 0) {
+
+    $pdf->Cell(11, 10, "059757", 1, 0, 'C');
+    $pdf->Cell(38, 10, "", 1, 0, 'C');
+    $pdf->SetXY($pdf->GetX() - 38, $pdf->GetY() + 2);
+    $pdf->MultiCell(38, 3, utf8_decode("PERNIL CAMPO MERCAMIO MARINADO"), 0, 'C');
+    $pdf->SetXY($pdf->GetX(), $pdf->GetY() - 8);
+    $pdf->Cell(49, 5, "", 0, 0, 'C');
+    $pdf->Cell(20, 10,empty($lotes["059757"]) ? "" : $lotes["059757"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $row[2] * 2, 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $items["059757"]["kg"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $items["059757"]["cajas"], 1, 0, 'C');
+    $pdf->Cell(5, 4, "", 0, 0, 'C');
+    $pdf->Cell(14.5, 10, $row[2] * 2, 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $itemsM["059757"]["kg"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $itemsM["059757"]["cajas"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10,number_format($porcentajePernil, 2) . "%", 1, 0, 'C');
+    if ($mejoraPernil < 20 || $mejoraPernil > 30) {
+        $pdf->SetTextColor(255, 0, 0);
+        $pdf->Cell(14.5, 10, number_format($mejoraPernil, 2) . "%", 1, 1, 'C');
+    }else {
+        $pdf->Cell(14.5, 10, number_format($mejoraPernil, 2) . "%", 1, 1, 'C');
+    }
+    $pdf->SetTextColor(0, 0, 0);
+}
+if ($items["059755"]["kg"] != 0) {
+
+    $pdf->Cell(11, 10, "059755", 1, 0, 'C');
+    $pdf->Cell(38, 10, "", 1, 0, 'C');
+    $pdf->SetXY($pdf->GetX() - 38, $pdf->GetY() + 2);
+    $pdf->MultiCell(38, 3, utf8_decode("POLLO CAMPO MERCAMIO MARINADO"), 0, 'C');
+    $pdf->SetXY($pdf->GetX(), $pdf->GetY() - 8);
+    $pdf->Cell(49, 5, "", 0, 0, 'C');
+    $pdf->Cell(20, 10,empty($lotes["059755"]) ? "" : $lotes["059755"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $row[2], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $items["059755"]["kg"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $items["059755"]["cajas"], 1, 0, 'C');
+    $pdf->Cell(5, 4, "", 0, 0, 'C');
+    $pdf->Cell(14.5, 10, $row[2], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $itemsM["059755"]["kg"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $itemsM["059755"]["cajas"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, "", 1, 0, 'C');
+    if ($mejoraPollo < 17 || $mejoraPollo > 22) {
+        $pdf->SetTextColor(255, 0, 0);
+        $pdf->Cell(14.5, 10, number_format($mejoraPollo, 2) . "%", 1, 1, 'C');
+    }else {
+        $pdf->Cell(14.5, 10, number_format($mejoraPollo, 2) . "%", 1, 1, 'C');
+    }
+    $pdf->SetTextColor(0, 0, 0);
+}
+if ($items["042788"]["kg"] != 0) {
+
+    $pdf->Cell(11, 10, "042788", 1, 0, 'C');
+    $pdf->Cell(38, 10, "", 1, 0, 'C');
+    $pdf->SetXY($pdf->GetX() - 38, $pdf->GetY() + 2);
+    $pdf->MultiCell(38, 3, utf8_decode("C/MUSLO CAMPO MERCAMIO MARINADO"), 0, 'C');
+    $pdf->SetXY($pdf->GetX(), $pdf->GetY() - 8);
+    $pdf->Cell(49, 5, "", 0, 0, 'C');
+    $pdf->Cell(20, 10,empty($lotes["042788"]) ? "" : $lotes["042788"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, "", 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $items["042788"]["kg"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $items["042788"]["cajas"], 1, 0, 'C');
+    $pdf->Cell(5, 4, "", 0, 0, 'C');
+    $pdf->Cell(14.5, 10, "", 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $itemsM["042788"]["kg"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $itemsM["042788"]["cajas"], 1, 1, 'C');
+}
+if ($items["042789"]["kg"] != 0) {
+
+    $pdf->Cell(11, 10, "042789", 1, 0, 'C');
+    $pdf->Cell(38, 10, "", 1, 0, 'C');
+    $pdf->SetXY($pdf->GetX() - 38, $pdf->GetY() + 2);
+    $pdf->MultiCell(38, 3, utf8_decode("MUSLO CAMPO MERCAMIO MARINADOS"), 0, 'C');
+    $pdf->SetXY($pdf->GetX(), $pdf->GetY() - 8);
+    $pdf->Cell(49, 5, "", 0, 0, 'C');
+    $pdf->Cell(20, 10,empty($lotes["042789"]) ? "" : $lotes["042789"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, "", 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $items["042789"]["kg"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $items["042789"]["cajas"], 1, 0, 'C');
+    $pdf->Cell(5, 4, "", 0, 0, 'C');
+    $pdf->Cell(14.5, 10, "", 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $itemsM["042789"]["kg"], 1, 0, 'C');
+    $pdf->Cell(14.5, 10, $itemsM["042789"]["cajas"], 1, 1, 'C');
+}
+if ($items["045401"]["kg"] != 0) {
+    $pdf->Ln(2);
+    $pdf->Cell(11, 14, "045401", 1, 0, 'C');
+    $pdf->Cell(38, 14, "", 1, 0, 'C');
+    $pdf->SetXY($pdf->GetX() - 38, $pdf->GetY() + 1);
+    $pdf->MultiCell(38, 3, utf8_decode("BOMBONES POLLO CAMPO MARINADO"), 0, 'C');
+    $pdf->SetXY($pdf->GetX() + 11, $pdf->GetY() + 1);
+    $pdf->Cell(38, 5, "LOTE:_______________", 0, 0, 'C');
+    $pdf->SetXY($pdf->GetX() - 49, $pdf->GetY() - 8);
+    $pdf->Cell(49, 5, "", 0, 0, 'C');
+    $pdf->Cell(20, 14,empty($lotes["045401"]) ? "" : $lotes["045401"], 1, 0, 'C');
+    $pdf->Cell(14.5, 14, "", 1, 0, 'C');
+    $pdf->Cell(14.5, 14, $items["045401"]["kg"], 1, 0, 'C');
+    $pdf->Cell(14.5, 14, $items["045401"]["cajas"], 1, 0, 'C');
+    $pdf->Cell(5, 4, "", 0, 0, 'C');
+    $pdf->Cell(14.5, 14, "", 1, 0, 'C');
+    $pdf->Cell(14.5, 14, $itemsM["045401"]["kg"], 1, 0, 'C');
+    $pdf->Cell(14.5, 14, $itemsM["045401"]["cajas"], 1, 1, 'C');
+}
+
+$pdf->Ln(2);
+$pdf->Cell(190, 28, "", 1, 1, 'C');
+$pdf->SetXY($pdf->GetX(), $pdf->GetY() - 28);
+$pdf->Cell(47, 7, "SUBTOTAL POLLO DESPRESADO", 0, 0, 'C');
+$pdf->Cell(36.5, 7, "", 0, 0, 'C');
+$pdf->Cell(14.5, 7, $PesoTotalDes, 0, 0, 'C');
+$pdf->Cell(14.5, 7, $CajaTotalDes, 0, 0, 'C');
+$pdf->Cell(19.5, 7, "", 0, 0, 'C');
+$pdf->Cell(14.5, 7, $PesoTotalMej, 0, 0, 'C');
+$pdf->Cell(14.5, 7, $CajaTotalMej, 0, 0, 'C');
+$pdf->Cell(14.5, 7, "", 0, 0, 'C');
+$pdf->Cell(14.5, 7, number_format($totalPorcentaje, 2) . "%", 0, 1, 'C');
+$pdf->Cell(21, 7, "TOTAL BRUTO", 0, 0, 'C');
+$pdf->Cell(62.5, 7, "", 0, 0, 'C');
+$pdf->Cell(14.5, 7, $PesoTotalDesP, 0, 0, 'C');
+$pdf->Cell(14.5, 7, $CajaTotalDesP, 0, 0, 'C');
+$pdf->Cell(19.5, 7, "", 0, 0, 'C');
+$pdf->Cell(14.5, 7, $PesoTotalMejP, 0, 0, 'C');
+$pdf->Cell(14.5, 7, $CajaTotalMejP, 0, 0, 'C');
+$pdf->Cell(14.5, 7, "", 0, 0, 'C');
+$pdf->Cell(14.5, 7, number_format($totalPorcentajeP, 2) . "%", 0, 1, 'C');
+$pdf->Cell(21, 7, "CANASTILLAS", 0, 0, 'C');
+$pdf->Cell(48, 7, "", 0, 0, 'C');
+$pdf->Cell(14.5, 7, $canastillasBase, 0, 0, 'C');
+$pdf->Cell(14.5, 7, number_format(($canastillasBase * 1.8), 2), 0, 1, 'C');
+$pdf->Cell(83.5, 7, "", 0, 0, 'C');
+$pdf->Cell(14.5, 7, number_format($PesoTotalDesP - ($canastillasBase * 1.8), 2), 0, 1, 'C');
+$pdf->Ln(2);
+$pdf->SetFont("Arial", "B", 8);
+$pdf->Cell(49, 5, utf8_decode("Estándar de Mejoramiento"), 1, 0, 'C');
+$pdf->Cell(5, 5, "", 0, 0, 'C');
+$pdf->Cell(49, 5, utf8_decode("Estándar de Participacíon por Pieza"), 1, 1, 'C');
+$pdf->SetFont("Arial", "", 9);
+$pdf->Cell(20, 5, "Pechuga", 1, 0, '');
+$pdf->Cell(29, 5, "20%  al  30%", 1, 0, 'C');
+$pdf->Cell(5, 5, "", 0, 0, 'C');
+$pdf->Cell(20, 5, "Pechuga", 1, 0, '');
+$pdf->Cell(29, 5, "Mayor  al  39%", 1, 1, 'C');
+$pdf->Cell(20, 5, "Pernil", 1, 0, '');
+$pdf->Cell(29, 5, "20%  al  30%", 1, 0, 'C');
+$pdf->Cell(5, 5, "", 0, 0, 'C');
+$pdf->Cell(20, 5, "Ala", 1, 0, '');
+$pdf->Cell(29, 5, "Menor  al  16%", 1, 1, 'C');
+$pdf->Cell(20, 5, "Ala", 1, 0, '');
+$pdf->Cell(29, 5, "15%  al  22%", 1, 1, 'C');
+$pdf->Cell(20, 5, "Pollo Entero", 1, 0, '');
+$pdf->Cell(29, 5, "17%  al  22%", 1, 0, 'C');
+
+
+
+
+$pdf->Output('formato_desprese.pdf', 'D');

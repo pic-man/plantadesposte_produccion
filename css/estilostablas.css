@@ -1,0 +1,133 @@
+#jtableEliminar thead,
+		#jtableEliminar tfoot {
+			color: #f44336 !important;
+		}
+
+		#jtable_wrapper,
+		#jtableCriterio_wrapper,
+		#jtableVisualizar_wrapper,
+		#jtableCriterioVisualizar_wrapper {
+			margin-top: 15px;
+			display: block;
+		}
+
+		#jtableVisualizar_wrapper .dataTables_filter label,
+		#jtableVisualizar_wrapper #jtableVisualizar_length label,
+		#jtableVisualizar_wrapper #jtableVisualizar_info {
+			color: #16a085 !important;
+			display: contents !important;
+		}
+
+		#jtableEliminar_wrapper .dataTables_filter label,
+		#jtableEliminar_wrapper #jtableEliminar_length label,
+		#jtableEliminar_wrapper #jtableEliminar_info {
+			color: #f44336 !important;
+			display: contents !important;
+		}
+
+		#jtable_filter label,
+		#jtable_length label,
+		#jtableVisualizar_filter label,
+		#jtableVisualizar_length label {
+			text-align: -webkit-center !important;
+			text-align: -moz-center !important;
+			margin-bottom: 10px;
+		}
+
+		
+
+		.dataTables_wrapper .dataTables_processing {
+			top: 63% !important;
+		}
+
+		div#jtableCriterio_processing {
+			width: 92% !important;
+		}
+
+		table td,
+		table tfoot th,
+		table thead th {
+			font-size: 14px !important;
+			vertical-align: inherit !important;
+			font-weight: bold !important;
+			text-align: center;
+		}
+
+		table.dataTable>tbody>tr>td {
+			padding: 0px !important;
+		}
+
+		table.dataTable>tbody>tr.child ul {
+			width: -webkit-fill-available !important;
+		}
+
+		.dtr-data {
+			text-align: -webkit-right !important;
+			width: -webkit-fill-available !important;
+		}
+
+		table.dataTable>tbody>tr.child ul li {
+			display: flex !important;
+		}
+
+		th {
+			padding: 10px 5px 10px 5px !important;
+		}
+
+		#jtable_filter label,
+		#jtable_length label,
+		#jtableVisualizar_filter label,
+		#jtableVisualizar_length label {
+			text-align: -webkit-center !important;
+			text-align: -moz-center !important;
+		}
+
+		#jtableCriterio_length,
+		#jtableCriterio_filter,
+		#jtableCriterio_info,
+		#jtableCriterio_paginate {
+			display: none !important;
+		}
+
+		#jtable_paginate {
+			text-align: right;
+		}
+
+		#jtable_paginate {
+			text-align: right;
+		}
+
+		#jtable_paginate ul.pagination {
+			margin: 0;
+			border-radius: 4px;
+		}
+
+		#jtable_paginate ul.pagination li {
+			display: inline-block;
+			padding: 5px 10px;
+		}
+
+		#jtable_paginate ul.pagination li a {
+			color: #333;
+			text-decoration: none;
+			transition: background-color 0.3s ease;
+		}
+
+		#jtable_paginate ul.pagination li.active a {
+			background-color: #ddd;
+			cursor: default;
+		}
+
+		#jtable_paginate ul.pagination li a:hover {
+			background-color: #eee;
+		}
+
+		#jtable_paginate {
+			text-align: center;
+			float: right;
+		}
+
+		#jtable td {
+			padding: 15px !important;
+			text-align: left;
+		}
